@@ -28,6 +28,7 @@
 #include "ros/spinner.h"
 #include "ros/ros.h"
 #include "ros/callback_queue.h"
+#include <tracetools/tracetools.h>
 
 #include <boost/thread/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -42,6 +43,8 @@ namespace ros
 
 void SingleThreadedSpinner::spin(CallbackQueue* queue)
 {
+  ros::trace::task_init("SingleThreadedSpinner::spin");
+
   boost::recursive_mutex::scoped_try_lock spinlock(spinmutex);
   if(!spinlock.owns_lock()) {
     ROS_ERROR("SingleThreadedSpinner: You've attempted to call spin "
@@ -184,6 +187,8 @@ void AsyncSpinnerImpl::stop()
 
 void AsyncSpinnerImpl::threadFunc()
 {
+  ros::trace::task_init("AsyncSpinner::threadFunc");
+
   disableAllSignalsInThisThread();
 
   CallbackQueue* queue = callback_queue_;

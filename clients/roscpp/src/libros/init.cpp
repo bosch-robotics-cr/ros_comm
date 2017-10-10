@@ -49,6 +49,7 @@
 #include "ros/transport/transport_tcp.h"
 #include "ros/internal_timer_manager.h"
 #include "XmlRpcSocket.h"
+#include <tracetools/tracetools.h>
 
 #include "roscpp/GetLoggers.h"
 #include "roscpp/SetLoggerLevel.h"
@@ -274,6 +275,8 @@ void basicSigintHandler(int sig)
 
 void internalCallbackQueueThreadFunc()
 {
+  ros::trace::task_init("internal callback queue thread");
+
   disableAllSignalsInThisThread();
 
   CallbackQueuePtr queue = getInternalCallbackQueue();
@@ -460,6 +463,8 @@ void init(const M_string& remappings, const std::string& name, uint32_t options)
     param::init(remappings);
 
     g_initialized = true;
+
+    ros::trace::node_init(name.c_str(), ROS_VERSION);
   }
 }
 
